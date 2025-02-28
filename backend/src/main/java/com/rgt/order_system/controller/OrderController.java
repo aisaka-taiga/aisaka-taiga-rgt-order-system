@@ -25,7 +25,7 @@ public class OrderController {
     public String createOrder(@RequestBody Order order) {
         order.setStatus("접수됨");
         orders.add(order);
-        logger.info("🛒 주문 접수됨: 음식={}, 수량={}", order.getFoodName(), order.getQuantity());
+        logger.info("주문 접수됨: 음식={}, 수량={}", order.getFoodName(), order.getQuantity());
 
         // WebSocket으로 실시간 주문 정보 전송
         messagingTemplate.convertAndSend("/topic/orders", order);
@@ -39,7 +39,7 @@ public class OrderController {
             return "잘못된 주문 인덱스입니다.";
         }
         orders.get(index).setStatus(status);
-        logger.info("🔄 주문 상태 변경: 음식={}, 상태={}", orders.get(index).getFoodName(), status);
+        logger.info("주문 상태 변경: 음식={}, 상태={}", orders.get(index).getFoodName(), status);
 
         // 변경된 주문 상태를 WebSocket으로 전송
         messagingTemplate.convertAndSend("/topic/orders", orders.get(index));
