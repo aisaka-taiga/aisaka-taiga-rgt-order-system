@@ -1,0 +1,8 @@
+### 주문 생성 (POST 요청)
+POST http://localhost:8080/api/order
+Content-Type: application/json
+
+{
+  "foodName": "치킨",
+  "quantity": 2
+}
