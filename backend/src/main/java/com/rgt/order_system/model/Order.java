@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class Order {
     private String foodName;
     private int quantity;
+    private String status; // 주문 상태 필드 추가
 }
