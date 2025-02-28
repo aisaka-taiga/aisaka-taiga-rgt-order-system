@@ -169,3 +169,4 @@ dist
 # End of https://www.toptal.com/developers/gitignore/api/java,node
 # 프로젝트 제외 경로
 /.gradle/
+/build/
