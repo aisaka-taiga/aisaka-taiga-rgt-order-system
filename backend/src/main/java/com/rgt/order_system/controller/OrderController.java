@@ -3,6 +3,8 @@ package com.rgt.order_system.controller;
 import com.rgt.order_system.model.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,8 +23,8 @@ public class OrderController {
         this.messagingTemplate = messagingTemplate;
     }
 
-    @PostMapping("/order")
-    public String createOrder(@RequestBody Order order) {
+    @PostMapping(value = "/order", produces = MediaType.TEXT_PLAIN_VALUE + ";charset=UTF-8")
+    public ResponseEntity<String> createOrder(@RequestBody Order order) {
         order.setStatus("접수됨");
         orders.add(order);
         logger.info("주문 접수됨: 음식={}, 수량={}", order.getFoodName(), order.getQuantity());
@@ -30,8 +32,11 @@ public class OrderController {
         // WebSocket으로 실시간 주문 정보 전송
         messagingTemplate.convertAndSend("/topic/orders", order);
 
-        return "주문이 접수되었습니다.";
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf("text/plain;charset=UTF-8"))
+                .body("주문이 접수되었습니다.");
     }
+
 
     @PutMapping("/order/{index}")
     public String updateOrderStatus(@PathVariable int index, @RequestParam String status) {
