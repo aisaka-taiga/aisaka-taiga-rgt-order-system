@@ -38,15 +38,14 @@ public class OrderController {
     }
 
 
-    @PutMapping("/order/{index}")
-    public String updateOrderStatus(@PathVariable int index, @RequestParam String status) {
+    @PutMapping(value = "/order/{index}", produces = "text/plain;charset=UTF-8")
+    public String updateOrderStatus(@PathVariable("index") int index, @RequestParam("status") String status) {
         if (index < 0 || index >= orders.size()) {
             return "잘못된 주문 인덱스입니다.";
         }
         orders.get(index).setStatus(status);
         logger.info("주문 상태 변경: 음식={}, 상태={}", orders.get(index).getFoodName(), status);
 
-        // 변경된 주문 상태를 WebSocket으로 전송
         messagingTemplate.convertAndSend("/topic/orders", orders.get(index));
 
         return "주문 상태가 업데이트되었습니다.";
