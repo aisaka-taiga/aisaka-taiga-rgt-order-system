@@ -11,13 +11,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Slf4j
 @RestController
 @RequestMapping("/api")
 public class OrderController {
 
-    private final List<Order> orders = new ArrayList<>();
+    private final List<Order> orders = new CopyOnWriteArrayList<>();
     private final SimpMessagingTemplate messagingTemplate;
 
     public OrderController(SimpMessagingTemplate messagingTemplate) {
