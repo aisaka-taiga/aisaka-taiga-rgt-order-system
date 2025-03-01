@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { TextField, Button, Typography, Card, CardContent, Stack } from "@mui/material";
 
-function App() {
+const Order = () => {
   const [foodName, setFoodName] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [message, setMessage] = useState("");
@@ -29,32 +30,37 @@ function App() {
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>식당 주문 시스템</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>음식 이름: </label>
-          <input
-            type="text"
+    <Card>
+      <CardContent>
+        <Typography variant="h6" fontWeight="bold" gutterBottom>
+          주문하기
+        </Typography>
+        <Stack spacing={2} component="form" onSubmit={handleSubmit}>
+          <TextField
+            label="음식 이름"
+            variant="outlined"
+            fullWidth
             value={foodName}
             onChange={(e) => setFoodName(e.target.value)}
             required
           />
-        </div>
-        <div>
-          <label>수량: </label>
-          <input
+          <TextField
+            label="수량"
             type="number"
+            variant="outlined"
+            fullWidth
             value={quantity}
             onChange={(e) => setQuantity(Number(e.target.value))}
             required
           />
-        </div>
-        <button type="submit">주문</button>
-      </form>
-      {message && <p>{message}</p>}
-    </div>
+          <Button type="submit" variant="contained" color="primary">
+            주문하기
+          </Button>
+        </Stack>
+        {message && <Typography color="error" mt={2}>{message}</Typography>}
+      </CardContent>
+    </Card>
   );
-}
+};
 
-export default App;
+export default Order;
