@@ -1,70 +1,70 @@
-# Getting Started with Create React App
+# 실시간 주문 처리 시스템
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+이 프로젝트는 **Spring Boot**와 **React**를 활용하여 실시간 주문을 처리하는 시스템입니다.  
+웹소켓을 사용하여 주문을 실시간으로 전송하고, 대시보드에서 확인할 수 있습니다.
 
-## Available Scripts
+## 주요 기능
 
-In the project directory, you can run:
+- **주문 입력 및 전송** (React + Spring Boot REST API)
+- **실시간 주문 처리 및 업데이트** (WebSocket + STOMP)
+- **주문 목록 대시보드** (React + MUI)
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🛠 개발 환경
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### **Backend**
+- **Java 17**
+- **Spring Boot**
+- **Spring WebSocket (STOMP)**
+- **Lombok**
+- **JUnit5, Mockito** (테스트)
 
-### `npm test`
+### **Frontend**
+- **React 18**
+- **Material-UI (MUI)**
+- **SockJS, STOMP.js**
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## 🚀 설치 및 실행 방법
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### **Backend (Spring Boot)**
+1. 프로젝트 클론  
+```bash
+git clone https://github.com/your-repo/rgt-order-system.git
+cd rgt-order-system/backend
+./gradlew bootRun
+```
+### **Frontend (React)**
+```
+cd ../frontend
+npm install
+npm start
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## API 엔드포인트
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### **주문 관련 REST API**
 
-### `npm run eject`
+| 메서드 | 엔드포인트     | 설명        |
+|--------|--------------|------------|
+| **POST** | `/api/order`  | 주문 생성  |
+| **GET**  | `/api/orders` | 주문 목록 조회 |
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### **WebSocket 엔드포인트**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+| 채널           | 설명                |
+|---------------|--------------------|
+| `/ws`         | WebSocket 연결      |
+| `/app/order`  | 주문 전송 채널      |
+| `/topic/orders` | 실시간 주문 구독 |
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 개선할 점
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- Kafka를 이용한 메시지 큐 적용
+현재 WebSocket을 통한 실시간 주문 처리만 지원하지만, Kafka를 활용하여 메시지 큐를 적용하면 주문 데이터를 비동기적으로 처리하고 확장성을 높일 수 있음.
+- Redis를 활용한 캐싱
+주문 목록 조회 시 데이터베이스 부하를 줄이기 위해 Redis를 활용한 캐싱을 적용하면 성능 개선 가능.
 
-## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
