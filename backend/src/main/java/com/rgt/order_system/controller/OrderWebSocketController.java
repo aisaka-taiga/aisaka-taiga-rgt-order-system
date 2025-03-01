@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -62,12 +60,10 @@ public class OrderWebSocketController {
         int end = totalCount;  // 끝 인덱스는 전체 주문 수
 
         // 로그로 start와 end 출력하여 확인
-        System.out.println("Start: " + start + ", End: " + end);
+        log.info("Start: {}, End: {}", start, end);
 
         // 최신 10개 주문 반환
         return orders.subList(start, end); // 내림차순, 오름차순 없이 최신 10개 주문 반환
     }
 
-
 }
-
