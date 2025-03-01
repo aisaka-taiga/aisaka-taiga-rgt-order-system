@@ -22,7 +22,7 @@ function App() {
 
         {/* 실시간 주문 대시보드 */}
         <Grid item xs={12} md={7}>
-          <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
+          <Paper elevation={3} sx={{ p: 3, borderRadius: 2, height: "100%", overflow: "auto" }}>
             <Dashboard />
           </Paper>
         </Grid>
