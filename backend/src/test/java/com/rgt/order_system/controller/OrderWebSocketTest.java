@@ -1,5 +1,6 @@
 package com.rgt.order_system.controller;
 
+import com.rgt.order_system.model.Order;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -82,30 +83,15 @@ public class OrderWebSocketTest {
                     });
 
             StompSession session = futureSession.get(3, TimeUnit.SECONDS);
-            session.send("/app/order", new OrderRequest(orderId, "menu-" + orderId));
+
+            // 주문 객체 생성 및 전송
+            Order order = new Order("menu-" + orderId, 1, "PENDING");
+            session.send("/app/order", order);
 
             return true;
         } catch (Exception e) {
             log.error("주문 전송 실패 (orderId={}): {}", orderId, e.getMessage());
             return false;
-        }
-    }
-
-    static class OrderRequest {
-        private final int orderId;
-        private final String menuName;
-
-        public OrderRequest(int orderId, String menuName) {
-            this.orderId = orderId;
-            this.menuName = menuName;
-        }
-
-        public int getOrderId() {
-            return orderId;
-        }
-
-        public String getMenuName() {
-            return menuName;
         }
     }
 }
