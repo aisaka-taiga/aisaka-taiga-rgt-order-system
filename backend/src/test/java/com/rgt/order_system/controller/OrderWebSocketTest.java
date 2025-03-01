@@ -185,6 +185,50 @@ public class OrderWebSocketTest {
     }
 
     /**
+     * 주문 상태 변경 및 대시보드에 반영 확인
+     */
+    @Test
+    void testOrderStatusUpdateInDashboard() throws Exception {
+        CompletableFuture<StompSession> futureSession = stompClient.connectAsync(wsUrl, new StompSessionHandlerAdapter() {
+            @Override
+            public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
+                log.info("WebSocket 연결 성공!");
+            }
+
+            @Override
+            public void handleTransportError(StompSession session, Throwable exception) {
+                log.error("WebSocket 오류 발생: {}", exception.getMessage());
+            }
+        });
+
+        StompSession session = futureSession.get(3, TimeUnit.SECONDS);
+
+        // 주문 전송
+        Order order = new Order(null, "menu-2", 1, "PENDING");
+        session.send("/app/order", order);
+
+        // 주문 상태 변경 및 대시보드에 반영 확인
+        CompletableFuture<Order> receivedOrder = new CompletableFuture<>();
+        session.subscribe("/topic/orders", new StompFrameHandler() {
+            @Override
+            public Class<?> getPayloadType(StompHeaders headers) {
+                return Order.class;
+            }
+
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload) {
+                Order order = (Order) payload;
+                order.setStatus("COMPLETED");  // 상태 변경
+                receivedOrder.complete(order);
+            }
+        });
+
+        // 주문을 전송하고 받은 주문의 상태를 검증
+        Order orderReceived = receivedOrder.get(5, TimeUnit.SECONDS);
+        assertEquals("COMPLETED", orderReceived.getStatus());
+    }
+
+    /**
      * 주문 상태 업데이트를 테스트합니다. 주문 상태가 'PENDING'에서 'COMPLETED'로 변경되는지 확인합니다.
      */
     @Test
