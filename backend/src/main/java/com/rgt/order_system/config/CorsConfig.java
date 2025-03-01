@@ -13,11 +13,18 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(@NonNull CorsRegistry registry) {
-                registry.addMapping("/**") // 모든 경로에 대해
-                        .allowedOrigins("http://localhost:3000") // 프론트엔드 URL 허용
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 허용할 HTTP 메서드
-                        .allowedHeaders("*") // 모든 헤더 허용
-                        .allowCredentials(true); // 쿠키 인증 허용
+                registry.addMapping("/**") // 모든 API 요청에 대해 CORS 허용
+                        .allowedOrigins("http://localhost:3000") // React 프론트엔드 URL
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
+
+                // WebSocket CORS 설정 추가
+                registry.addMapping("/ws/**")
+                        .allowedOrigins("http://localhost:3000")
+                        .allowedMethods("GET", "POST", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
             }
         };
     }

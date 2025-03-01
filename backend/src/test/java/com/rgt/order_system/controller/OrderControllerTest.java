@@ -1,4 +1,5 @@
 package com.rgt.order_system.controller;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,11 +26,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
+@Slf4j
 @ExtendWith(MockitoExtension.class)
 public class OrderControllerTest {
-
-    private static final Logger logger = LoggerFactory.getLogger(OrderControllerTest.class);
-
 
     private MockMvc mockMvc;
 
@@ -119,7 +118,7 @@ public class OrderControllerTest {
                         .andExpect(content().contentType("text/plain;charset=UTF-8"))
                         .andExpect(content().string("주문이 접수되었습니다."));
             } catch (Exception e) {
-                logger.error("테스트 중 오류 발생", e);
+                log.error("테스트 중 오류 발생", e);
             }
         }));
 
@@ -127,7 +126,7 @@ public class OrderControllerTest {
         executor.awaitTermination(30, TimeUnit.SECONDS);
 
         long endTime = System.currentTimeMillis();
-        logger.info("총 실행 시간(ms): {}", (endTime - startTime));
+        log.info("총 실행 시간(ms): {}", (endTime - startTime));
     }
 
     // 테스트용 없는 주문 확인
