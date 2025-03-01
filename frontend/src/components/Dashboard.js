@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { Card, CardContent, Typography, List, ListItem, ListItemText } from "@mui/material";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
@@ -7,7 +7,7 @@ const Dashboard = () => {
   const [orders, setOrders] = useState([]);
 
   // 기존 주문 목록 가져오기
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       const response = await fetch("http://localhost:8080/api/orders");
       if (!response.ok) throw new Error("Failed to fetch orders");
@@ -16,8 +16,9 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Error fetching orders:", error);
     }
-  };
+  }, []);
 
+  // useEffect 내에서 fetchOrders 호출
   useEffect(() => {
     fetchOrders();
 
@@ -44,7 +45,16 @@ const Dashboard = () => {
     return () => {
       client.deactivate();
     };
-  }, []);
+  }, [fetchOrders]);
+
+  // `orders` 배열을 useMemo로 메모이제이션하여 불필요한 렌더링을 방지
+  const orderList = useMemo(() => {
+    return orders.map((order, index) => (
+      <ListItem key={index} divider>
+        <ListItemText primary={`${order.foodName} - ${order.quantity}개`} />
+      </ListItem>
+    ));
+  }, [orders]); // `orders`가 변경될 때만 리렌더링
 
   return (
     <Card>
@@ -52,13 +62,7 @@ const Dashboard = () => {
         <Typography variant="h6" fontWeight="bold" gutterBottom>
           실시간 주문 현황
         </Typography>
-        <List>
-          {orders.map((order, index) => (
-            <ListItem key={index} divider>
-              <ListItemText primary={`${order.foodName} - ${order.quantity}개`} />
-            </ListItem>
-          ))}
-        </List>
+        <List>{orderList}</List>
       </CardContent>
     </Card>
   );
