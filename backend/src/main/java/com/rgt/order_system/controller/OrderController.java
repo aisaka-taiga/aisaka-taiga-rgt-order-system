@@ -53,8 +53,10 @@ public class OrderController {
         return "주문 상태가 업데이트되었습니다.";
     }
 
+    /*
     @GetMapping("/orders")
     public List<Order> getOrders() {
         return orders;
     }
+     */
 }

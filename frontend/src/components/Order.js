@@ -1,85 +1,79 @@
+// OrderForm.js
 import React, { useState, useCallback } from "react";
 import { TextField, Button, Typography, Card, CardContent, Stack } from "@mui/material";
+import SockJS from "sockjs-client";
+import { Client } from "@stomp/stompjs";
 
-const Order = () => {
-  const [foodName, setFoodName] = useState("");
-  const [quantity, setQuantity] = useState(1);
-  const [message, setMessage] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const OrderForm = () => {
+  const [foodName, setFoodName] = useState("");  // 음식 이름 입력
+  const [quantity, setQuantity] = useState(1);  // 수량 입력
+  const [isSubmitting, setIsSubmitting] = useState(false);  // 주문 전송 상태
 
-  // 주문 제출 핸들러 최적화
-  const handleSubmit = useCallback(
-    async (e) => {
-      e.preventDefault();
-      setIsSubmitting(true);
+  // 주문 제출 핸들러
+  const handleSubmit = useCallback(async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
 
-      const orderData = { foodName, quantity };
+    const orderData = { foodName, quantity, status: "접수 대기" };
 
-      try {
-        const response = await fetch("http://localhost:8080/api/order", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(orderData),
-        });
+    try {
+      // WebSocket 연결 및 주문 전송
+      const socket = new SockJS("http://localhost:8080/ws");
+      const client = new Client({
+        webSocketFactory: () => socket,
+        debug: (str) => console.log(str),
+        reconnectDelay: 5000,
+        onConnect: () => {
+          client.publish({
+            destination: "/app/order",  // WebSocket으로 주문 전송
+            body: JSON.stringify(orderData),
+          });
+          console.log("Order sent:", orderData);
+        },
+        onStompError: (error) => {
+          console.error("WebSocket Error:", error);
+        },
+      });
 
-        if (response.ok) {
-          setMessage("주문이 접수되었습니다.");
-          // 주문 성공 시 입력값 초기화
-          setFoodName("");
-          setQuantity(1);
-        } else {
-          setMessage("주문 실패! 다시 시도해주세요.");
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        setMessage("서버 오류 발생!");
-      } finally {
-        setIsSubmitting(false); // 제출 완료 후 버튼 활성화
-      }
-    },
-    [foodName, quantity] // foodName과 quantity만 의존성으로 추가
-  );
+      client.activate();
+    } catch (error) {
+      console.error("Error sending order:", error);
+    } finally {
+      setIsSubmitting(false);
+      setFoodName("");
+      setQuantity(1);
+    }
+  }, [foodName, quantity]);
 
   return (
-    <Card>
-      <CardContent>
-        <Typography variant="h6" fontWeight="bold" gutterBottom>
+    <div>
+	<Typography variant="h6" fontWeight="bold" gutterBottom>
           주문하기
         </Typography>
-        <Stack spacing={2} component="form" onSubmit={handleSubmit}>
-          <TextField
-            label="음식 이름"
-            variant="outlined"
-            fullWidth
-            value={foodName}
-            onChange={(e) => setFoodName(e.target.value)}
-            required
-          />
-          <TextField
-            label="수량"
-            type="number"
-            variant="outlined"
-            fullWidth
-            value={quantity}
-            onChange={(e) => {
-              const newQuantity = e.target.value ? Number(e.target.value) : 1;
-              setQuantity(newQuantity);
-            }}
-            required
-          />
-          <Button 
-            type="submit" 
-            variant="contained" 
-            color="primary" 
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "주문 중..." : "주문하기"}
-          </Button>
-        </Stack>
-        {message && <Typography color="error" mt={2}>{message}</Typography>}
-      </CardContent>
-    </Card>
+      <Stack spacing={2} component="form" onSubmit={handleSubmit}>
+        <TextField
+          label="음식 이름"
+          variant="outlined"
+          fullWidth
+          value={foodName}
+          onChange={(e) => setFoodName(e.target.value)}
+          required
+        />
+        <TextField
+          label="수량"
+          type="number"
+          variant="outlined"
+          fullWidth
+          value={quantity}
+          onChange={(e) => setQuantity(Number(e.target.value))}
+          required
+        />
+        <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>
+          {isSubmitting ? "주문 중..." : "주문하기"}
+        </Button>
+      </Stack>
+    </div>
   );
 };
 
-export default Order;
+export default OrderForm;
