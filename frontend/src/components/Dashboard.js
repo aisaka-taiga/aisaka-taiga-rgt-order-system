@@ -49,8 +49,8 @@ const Dashboard = () => {
 
   // `orders` 배열을 useMemo로 메모이제이션하여 불필요한 렌더링을 방지
   const orderList = useMemo(() => {
-    return orders.map((order, index) => (
-      <ListItem key={index} divider>
+    return orders.map((order) => (
+      <ListItem key={order.id} divider>
         <ListItemText primary={`${order.foodName} - ${order.quantity}개`} />
       </ListItem>
     ));
