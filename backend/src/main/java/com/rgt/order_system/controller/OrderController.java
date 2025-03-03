@@ -32,6 +32,7 @@ public class OrderController {
         log.info("주문 접수됨: 음식={}, 수량={}", order.getFoodName(), order.getQuantity());
 
         // WebSocket으로 실시간 주문 정보 전송
+        log.info(String.valueOf(order));
         messagingTemplate.convertAndSend("/topic/orders", order);
 
         return ResponseEntity.ok()
